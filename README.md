@@ -4,14 +4,15 @@ Aplicação web para gestão de tarefas, apontamento de horas e rentabilidade de
 
 ## Stack
 - React + TypeScript + Vite
-- Tailwind CSS e componentes no padrão shadcn/ui
-- Supabase Auth, PostgreSQL e Row Level Security (RLS)
+- Tailwind CSS, componentes no padrão shadcn/ui e ícones Lucide
+- Supabase preparado para Auth, PostgreSQL e Row Level Security (RLS)
 
-## Requisitos
-- Interface em pt-BR, datas `dd/mm/aaaa` e valores em `R$`.
-- Perfis: analista, coordenador e gerente.
-- Dados nunca são excluídos fisicamente: registros são arquivados.
-- Primeiro recorte: MVP simples com painel, tarefas, horas e indicadores de rentabilidade.
+## MVP incluído
+- Painel operacional com indicadores demonstrativos.
+- Lista de tarefas com busca, filtros, criação e arquivamento/restauração sem exclusão física.
+- Visões iniciais de horas, rentabilidade, equipe e clientes.
+- UI responsiva em pt-BR, datas `dd/mm/aaaa`, valores em `R$` e paleta RG: `#204B8F`, `#264677`, `#EEF9FD`, `#A1B6D5`, `#5171A5`.
+- Primitivos de UI no padrão shadcn em `src/components/ui`.
 
 ## Desenvolvimento
 ```bash
@@ -19,10 +20,16 @@ npm install
 cp .env.example .env.local
 npm run dev
 ```
-Configure `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` para ativar o Supabase. Sem configuração, o app usa dados demonstrativos locais.
 
-## Banco de dados
-Aplique `supabase/migrations/202610100001_initial_schema.sql` no projeto Supabase. A migration habilita RLS, funções de autorização por perfil e arquivamento lógico.
+Configure `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` no `.env.local` para preparar o cliente Supabase. **Importante:** neste MVP, a interface ainda usa dados de demonstração; autenticação, consultas reais e gravação no Supabase não estão integradas ainda.
+
+## Banco de dados e permissões
+Aplique `supabase/migrations/202610100001_initial_schema.sql` no SQL Editor do Supabase. A migration cria organizações, perfis, clientes, tarefas e apontamentos de horas, habilita RLS e cria políticas baseadas em perfil/organização. Também bloqueia exclusões físicas por trigger e permissões SQL; arquive registros usando `archived_at`.
+
+O primeiro registro de organização e a atribuição inicial de gerente devem ser provisionados por um fluxo administrativo confiável no Supabase. A migration não oferece cadastro público de organizações ou edição de cargos pelo frontend.
 
 ## Segurança
-Nunca use `service_role` no frontend. O controle de acesso deve ser imposto no banco via RLS; a seleção de perfil na interface é apenas para demonstração e não concede privilégios reais.
+- Perfis previstos: analista, coordenador e gerente.
+- RLS é a camada de autorização real no banco; o seletor “Perfil demo” na interface é apenas ilustrativo e não concede permissões.
+- Nunca exponha a chave `service_role` no frontend.
+- Revise e teste as políticas RLS com usuários de cada perfil antes de usar dados reais.
