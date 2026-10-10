@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import {
   Activity, Archive, ArrowDownRight, ArrowRight, ArrowUpRight, Bell, BriefcaseBusiness,
   CalendarDays, Check, CheckCircle2, ChevronDown, CircleHelp, Clock3, Command, FileText,
@@ -56,7 +56,7 @@ function App() {
   const completed = activeTasks.filter(t => t.status === "Concluída").length;
   const totalHours = activeTasks.reduce((sum, t) => sum + t.hours, 0);
 
-  function createTask(e: React.FormEvent) {
+  function createTask(e: FormEvent) {
     e.preventDefault();
     if (!newTitle.trim() || !newClient.trim()) return;
     const [y, m, d] = newDue.split("-");
